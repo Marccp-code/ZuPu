@@ -14,11 +14,11 @@ void FileOperate :: FileSave(Tree *tr){
 
         ts<<(tr->father_name)<<endl;
         ts<<(tr->selfname)<<endl;
-        ts<<(tr->Sex)<<endl;
+        ts<<(tr->gender)<<endl;
         ts<<(tr->IsLife)<<endl;
         ts<<(tr->generation)<<endl;
         ts<<(tr->telnum)<<endl;
-        ts<<(tr->saddress)<<endl;
+        ts<<(tr->address)<<endl;
         ts.flush();
         file.close();
 
@@ -77,7 +77,7 @@ void FileOperate :: FileRead(Tree* &tr,QString filename){
             if((line=ts.readLine())!=NULL)
                  tr_t->selfname=line;
             if((line=ts.readLine())!=NULL)
-                 tr_t->Sex=line;
+                 tr_t->gender=line;
             if((line=ts.readLine())!=NULL)
                 tr_t->IsLife=line;
 
