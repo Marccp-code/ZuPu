@@ -1,7 +1,10 @@
 #include<QTextStream>
 #include<QFile>
+#include<queue>
 #include "fileoperate.h"
 #include "tree.h"
+#include<sstream>
+using namespace std;
 void FileOperate :: FileSave(Tree *tr){
         if(tr!=NULL){
             QFile file(tr->selfname+".txt");
@@ -11,23 +14,23 @@ void FileOperate :: FileSave(Tree *tr){
 
         ts<<(tr->father_name)<<endl;
         ts<<(tr->selfname)<<endl;
-        ts<<(tr->Sex)<<endl;
+        ts<<(tr->gender)<<endl;
         ts<<(tr->IsLife)<<endl;
         ts<<(tr->generation)<<endl;
         ts<<(tr->telnum)<<endl;
-        ts<<(tr->saddress)<<endl;
+        ts<<(tr->address)<<endl;
         ts.flush();
         file.close();
 
-        save(tr->leftone);
-        save(tr->rightone);
+        FileSave(tr->leftone);
+        FileSave(tr->rightone);
 
 
         }
 
 }
 
-void FileOperate :: FileClean(QString filename){
+void FileOperate :: FileClean(Tree* &tr,QString filename){
     QFile file(filename+".txt");
     file.open(QFile::Truncate);
     file.close();
@@ -38,6 +41,7 @@ void FileOperate :: FileRead(Tree* &tr,QString filename){
    // Tree *tr;
     Tree *q_t;
     Tree *tr_t;
+    bool ok;
     QFile file(filename +".txt");
     if(file.open(QFile::ReadOnly)){
         QTextStream ts(&file);
@@ -60,13 +64,12 @@ void FileOperate :: FileRead(Tree* &tr,QString filename){
         if((line=ts.readLine())!=NULL)
             tr->address=line;
         if((line=ts.readLine())!=NULL) {
-            stringstream s(line);
-            s>>tr->generation;
+            tr->generation=line.toInt(&ok,10);
         }
 
     q.push(tr);
     line=ts.readLine();
-    while(!ts.stEnd()){
+    while(!line.isNull()){
 
             tr_t=new(Tree);
 
@@ -74,26 +77,22 @@ void FileOperate :: FileRead(Tree* &tr,QString filename){
             if((line=ts.readLine())!=NULL)
                  tr_t->selfname=line;
             if((line=ts.readLine())!=NULL)
-                 tr_t->Sex=line;
-            if((line=ts.readLine())!=NULL){
-                if(line=="0")
-                    tr_t->IsLife=0;
-                else
-                    tr_t->IsLife=1;
-             }
+                 tr_t->gender=line;
+            if((line=ts.readLine())!=NULL)
+                tr_t->IsLife=line;
+
             if((line=ts.readLine())!=NULL) {
-                stringstream s(line);
-                s>>tr_t->generation;
+                tr->generation=line.toInt(&ok,10);
             }
             if((line=ts.readLine())!=NULL)
                 tr_t->telnum=line;
             if((line=ts.readLine())!=NULL)
                 tr_t->address=line;
-            line=ts.redLine();
+            line=ts.readLine();
 
-    if(tr_t->father_name==q.back()->name)
+    if(tr_t->father_name==q.back()->selfname)
     {
-        q.back()->left=tr_t;
+        q.back()->leftone=tr_t;
     tr_t->fatherone=q.back();
     tr_t->brotherone=q.back();
     q.push(tr_t);
@@ -106,7 +105,7 @@ else{
         q_t=q_t->fatherone;
         tr_t->brotherone=q_t;
     q_t->rightone=tr_t;
-            tr_t->fatherone=q_t->fatheoner;
+            tr_t->fatherone=q_t->fatherone;
     q.push(tr_t);
     //delete q_t;
 }
