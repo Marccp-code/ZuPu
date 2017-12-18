@@ -2,18 +2,18 @@
 #define FILEOPERATE_H
 #include <QWidget>
 #include "tree.h"
-namespace  Ui {
-class FileOperate;
-}
+#include <QDebug>
+
 class FileOperate : public QWidget
 {
     Q_OBJECT
 public:
-    explicit FileOperate(QWidget *parent=0);
-    ~FileOperate();
     void FileSave(Tree*);
-    void FileClean(Tree*);
-    void FileRead(Tree*,QString);
+    void FileClean(QString);
+    void FileCreate(Tree*,QString);
+    void FileRead(Tree* &,QString);
+
 };
+
 
 #endif // FILEOPERATE_H

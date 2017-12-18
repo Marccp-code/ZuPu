@@ -1,25 +1,39 @@
-#include<QTextStream>
-#include<QFile>
-#include<queue>
 #include "fileoperate.h"
 #include "tree.h"
-#include<sstream>
-using namespace std;
+#include<QTextStream>
+#include<QFile>
+#include<QQueue>
+#include <sstream>
+#include <QMessageBox>
+
+
 void FileOperate :: FileSave(Tree *tr){
-        if(tr!=NULL){
+
+    if(tr!=NULL){
             QFile file(tr->selfname+".txt");
+
             file.open(QFile::WriteOnly);
+
             QTextStream ts(&file);
+
             ts.setCodec("utf-8");
 
         ts<<(tr->father_name)<<endl;
+
         ts<<(tr->selfname)<<endl;
+
         ts<<(tr->gender)<<endl;
+
         ts<<(tr->IsLife)<<endl;
+
         ts<<(tr->generation)<<endl;
+
         ts<<(tr->telnum)<<endl;
+
         ts<<(tr->address)<<endl;
+
         ts.flush();
+
         file.close();
 
         FileSave(tr->leftone);
@@ -30,14 +44,14 @@ void FileOperate :: FileSave(Tree *tr){
 
 }
 
-void FileOperate :: FileClean(Tree* &tr,QString filename){
+void FileOperate :: FileClean(QString filename){
     QFile file(filename+".txt");
     file.open(QFile::Truncate);
     file.close();
 }
 
 void FileOperate :: FileRead(Tree* &tr,QString filename){
-    queue<Tree* > q;
+    QQueue<Tree*> q;
    // Tree *tr;
     Tree *q_t;
     Tree *tr_t;
@@ -54,11 +68,11 @@ void FileOperate :: FileRead(Tree* &tr,QString filename){
         if((line=ts.readLine())!=NULL)
              tr->gender=line;
         if((line=ts.readLine())!=NULL)
-           
+
                 tr->IsLife=line;
-           
-               
-    
+
+
+
         if((line=ts.readLine())!=NULL)
             tr->telnum=line;
         if((line=ts.readLine())!=NULL)
@@ -67,7 +81,7 @@ void FileOperate :: FileRead(Tree* &tr,QString filename){
             tr->generation=line.toInt(&ok,10);
         }
 
-    q.push(tr);
+    q.push_back(tr);
     line=ts.readLine();
     while(!line.isNull()){
 
@@ -95,7 +109,7 @@ void FileOperate :: FileRead(Tree* &tr,QString filename){
         q.back()->leftone=tr_t;
     tr_t->fatherone=q.back();
     tr_t->brotherone=q.back();
-    q.push(tr_t);
+    q.push_back(tr_t);
 }
 else{
 
@@ -106,7 +120,7 @@ else{
         tr_t->brotherone=q_t;
     q_t->rightone=tr_t;
             tr_t->fatherone=q_t->fatherone;
-    q.push(tr_t);
+    q.push_back(tr_t);
     //delete q_t;
 }
  //delete tr_t;
@@ -117,4 +131,35 @@ else{
     return;
 }
     return;
+}
+void FileOperate :: FileCreate(Tree* tr,QString filename){
+    if(tr==NULL){
+        QMessageBox::information(NULL,"title","根节点创建失败");
+        return;}
+    QFile file(filename+"txt");
+    if(!file.open(QFile::ReadWrite|QFile::Text)){
+        QMessageBox::information(NULL,"title","文件创建失败");
+        return;}
+    QTextStream ts(&file);
+
+    ts.setCodec("utf-8");
+
+    ts<<(tr->father_name)<<endl;
+
+    ts<<(tr->selfname)<<endl;
+
+    ts<<(tr->gender)<<endl;
+
+    ts<<(tr->IsLife)<<endl;
+
+    ts<<(tr->generation)<<endl;
+
+    ts<<(tr->telnum)<<endl;
+
+    ts<<(tr->address)<<endl;
+
+    file.close();
+    QMessageBox::information(NULL,"title","文件创建成功");
+    return;
+
 }
